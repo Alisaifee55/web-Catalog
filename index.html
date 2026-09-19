@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Catalog Access Portal</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#082238">
+<link rel="icon" type="image/png" sizes="192x192" href="logo-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Web Catalog">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0A2A43;          /* deep Mediterranean navy */
+  --ink-soft:#3D5A73;
+  --sea:#0E7C86;          /* teal */
+  --turq:#22B8B0;         /* turquoise */
+  --foam:#E6F5F3;         /* sea foam */
+  --sand:#F6EBD9;         /* warm sand */
+  --sand-2:#E9D6B7;
+  --coral:#E9735A;        /* terracotta coral */
+  --coral-soft:#FCEBE6;
+  --bg:#F8F4EC;
+  --card:#FFFFFF;
+  --line:#DCE6E3;
+  --shadow:0 10px 30px rgba(10,42,67,.08);
+  --radius:18px;
+  --serif:'Playfair Display',Georgia,'Times New Roman',serif;
+  --sans:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5}
+button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
+button{cursor:pointer}
+.ico{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* ---------- Hero ---------- */
+.hero{position:relative;background:linear-gradient(135deg,#082238 0%,#0B4A5C 55%,#0E7C86 100%);color:#fff;padding:34px 20px 84px;overflow:hidden}
+.hero::before{content:"";position:absolute;right:-90px;top:-90px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(246,235,217,.28),rgba(246,235,217,0) 68%)}
+.hero-in{max-width:1040px;margin:0 auto;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;position:relative}
+.brand{display:flex;align-items:center;gap:14px}
+.brand-mark{width:46px;height:46px;border-radius:14px;background:rgba(255,255,255,.12);display:grid;place-items:center;color:var(--sand)}
+.brand-mark .ico{width:24px;height:24px}
+.hero h1{margin:0;font-family:var(--serif);font-weight:700;font-size:28px;letter-spacing:.2px}
+.hero p{margin:2px 0 0;color:#CFE6E6;font-size:14px}
+.ghost{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);color:#fff;padding:9px 14px;border-radius:12px;font-weight:600;white-space:nowrap}
+.ghost:hover{background:rgba(255,255,255,.2)}
+.ghost:disabled{opacity:.6;cursor:default}
+.wave{position:absolute;left:0;right:0;bottom:-1px;width:100%;height:64px;display:block}
+.wave path{fill:var(--bg)}
+
+/* ---------- Layout ---------- */
+.wrap{max-width:1040px;margin:-44px auto 60px;padding:0 16px;position:relative}
+.panel{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;border:1px solid rgba(220,230,227,.7)}
+.panel + .panel{margin-top:16px}
+.label{display:flex;align-items:center;gap:8px;font-weight:700;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--sea);margin-bottom:10px}
+.field{position:relative}
+.field .ico{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--ink-soft);pointer-events:none}
+.input{width:100%;height:46px;border:1.5px solid var(--line);border-radius:14px;background:#FBFDFC;padding:0 14px 0 42px;outline:none;transition:border-color .15s, box-shadow .15s}
+.input:focus{border-color:var(--turq);box-shadow:0 0 0 4px rgba(34,184,176,.16)}
+.select{width:100%;height:46px;border:1.5px solid var(--line);border-radius:14px;background:#FBFDFC;padding:0 12px;outline:none}
+.select:focus{border-color:var(--turq);box-shadow:0 0 0 4px rgba(34,184,176,.16)}
+
+/* ---------- Name tabs ---------- */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;max-height:152px;overflow-y:auto;padding:2px 2px 4px}
+.chip{display:inline-flex;align-items:center;gap:8px;border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:7px 12px;font-weight:600;color:var(--ink);transition:all .15s}
+.chip:hover{border-color:var(--turq);background:var(--foam)}
+.chip[aria-selected="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+.chip .count{font-size:12px;font-weight:700;background:var(--foam);color:var(--sea);border-radius:999px;padding:1px 8px}
+.chip[aria-selected="true"] .count{background:rgba(255,255,255,.18);color:#fff}
+.muted{color:var(--ink-soft)}
+.hint{margin:10px 2px 0;font-size:13px}
+
+/* ---------- Toolbar ---------- */
+.head-row{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:14px}
+.head-row h2{margin:0;font-family:var(--serif);font-size:24px}
+.head-row .sub{margin:2px 0 0;font-size:13px}
+.stats{display:flex;flex-wrap:wrap;gap:8px}
+.stat{display:inline-flex;align-items:center;gap:7px;border-radius:12px;padding:6px 11px;font-weight:600;font-size:13px;background:var(--foam);color:var(--sea)}
+.stat.no{background:var(--coral-soft);color:#B5432D}
+.stat.pend{background:var(--sand);color:#8A6A2F}
+.stat.total{background:#EEF2F5;color:var(--ink)}
+.bar{height:8px;background:#EDF1F0;border-radius:99px;overflow:hidden;margin-top:14px}
+.bar > i{display:block;height:100%;background:linear-gradient(90deg,var(--turq),var(--sea));border-radius:99px;transition:width .4s}
+.tools{display:grid;grid-template-columns:1.6fr 1fr;gap:12px;margin-top:16px}
+.seg{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.seg button{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:6px 14px;font-weight:600;color:var(--ink-soft)}
+.seg button[aria-pressed="true"]{background:var(--sea);border-color:var(--sea);color:#fff}
+.seg button b{font-weight:700;opacity:.85}
+
+/* ---------- Catalog cards ---------- */
+.list{display:grid;gap:12px;margin-top:16px}
+.card{position:relative;background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 16px 14px 20px;box-shadow:0 4px 14px rgba(10,42,67,.05)}
+.card::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:5px;border-radius:0 6px 6px 0;background:var(--sand-2)}
+.card.yes::before{background:var(--turq)}
+.card.no::before{background:var(--coral)}
+.card-top{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:10px}
+.card h3{margin:0;font-size:17px;font-weight:700;word-break:break-word}
+.idtag{display:inline-flex;align-items:center;gap:4px;color:var(--ink-soft);font-size:12px;font-weight:600;margin-top:2px}
+.idtag .ico{width:13px;height:13px}
+.badge{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:4px 11px;font-size:12px;font-weight:700;white-space:nowrap}
+.badge.all-yes{background:var(--foam);color:var(--sea)}
+.badge.all-no{background:var(--sand);color:#8A6A2F}
+.meta{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:10px;color:var(--ink-soft);font-size:13.5px}
+.meta span{display:inline-flex;align-items:center;gap:7px}
+.meta b{color:var(--ink);font-weight:600}
+.reply{margin-top:14px;padding-top:12px;border-top:1px dashed var(--line)}
+.ask{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.ask .q{font-weight:600;margin-right:4px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:12px;padding:9px 16px;font-weight:700;border:1.5px solid transparent;transition:all .15s}
+.btn.yes{background:#fff;border-color:var(--turq);color:var(--sea)}
+.btn.yes:hover,.btn.yes.on{background:var(--sea);border-color:var(--sea);color:#fff}
+.btn.no{background:#fff;border-color:var(--coral);color:#B5432D}
+.btn.no:hover,.btn.no.on{background:var(--coral);border-color:var(--coral);color:#fff}
+.btn.primary{background:var(--ink);color:#fff}
+.btn.primary:hover{background:#0F3B5C}
+.btn.plain{background:transparent;color:var(--ink-soft);border-color:var(--line)}
+.btn.plain:hover{background:#F2F6F5}
+.btn:disabled{opacity:.6;cursor:default}
+.editor{margin-top:12px;display:grid;gap:10px}
+.editor textarea{width:100%;min-height:74px;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;resize:vertical;outline:none;background:#FBFDFC}
+.editor textarea:focus{border-color:var(--turq);box-shadow:0 0 0 4px rgba(34,184,176,.16)}
+.editor .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.counter{margin-left:auto;font-size:12px;color:var(--ink-soft)}
+.saved{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.pill{display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:5px 12px;font-weight:700;font-size:13px}
+.pill.yes{background:var(--foam);color:var(--sea)}
+.pill.no{background:var(--coral-soft);color:#B5432D}
+.stamp{font-size:12.5px;color:var(--ink-soft)}
+.note{margin:8px 0 0;padding:10px 12px;border-radius:12px;background:#F5F8F7;color:var(--ink);font-size:14px;white-space:pre-wrap;word-break:break-word}
+.saved .btn{margin-left:auto;padding:6px 12px}
+
+/* ---------- States ---------- */
+.empty{text-align:center;padding:38px 16px;color:var(--ink-soft)}
+.empty .ico{width:34px;height:34px;color:var(--sea);margin-bottom:8px}
+.empty h3{margin:0 0 4px;color:var(--ink);font-family:var(--serif);font-size:20px}
+.more{display:flex;justify-content:center;margin-top:16px}
+.skel{height:112px;border-radius:16px;background:linear-gradient(90deg,#EEF3F1 25%,#F8FBFA 37%,#EEF3F1 63%);background-size:400% 100%;animation:sh 1.3s ease infinite;margin-top:12px}
+@keyframes sh{0%{background-position:100% 50%}100%{background-position:0 50%}}
+.error{display:flex;gap:12px;align-items:flex-start;background:var(--coral-soft);border:1px solid #F3C3B7;color:#8E2F1B;border-radius:14px;padding:14px}
+.error .ico{margin-top:2px}
+.error p{margin:2px 0 8px}
+.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,30px);opacity:0;background:var(--ink);color:#fff;padding:11px 18px;border-radius:14px;box-shadow:0 12px 30px rgba(0,0,0,.25);display:flex;align-items:center;gap:10px;font-weight:600;transition:all .25s;pointer-events:none;z-index:50;max-width:92vw}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.toast.err{background:#9B321E}
+.spin{width:16px;height:16px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:rot .7s linear infinite}
+@keyframes rot{to{transform:rotate(360deg)}}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+@media (max-width:640px){
+  .hero{padding:26px 16px 78px}
+  .hero h1{font-size:23px}
+  .ghost span{display:none}
+  .tools{grid-template-columns:1fr}
+  .saved .btn{margin-left:0}
+}
+</style>
+</head>
+<body>
+
+<!-- Monochrome flat icon sprite (all icons inherit one colour via currentColor) -->
+<svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true" focusable="false">
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M18.7 5.3l-2.1 2.1M7.4 16.6l-2.1 2.1"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5z"/><path d="M5 19.5A1.5 1.5 0 0 0 6.5 21H19v-3"/></symbol>
+  <symbol id="i-pen" viewBox="0 0 24 24"><path d="M4 20l1.2-4.2L16.3 4.7a2 2 0 0 1 2.8 0l.2.2a2 2 0 0 1 0 2.8L8.2 18.8z"/></symbol>
+  <symbol id="i-hash" viewBox="0 0 24 24"><path d="M9 4L7 20M17 4l-2 16M4 9h16M3.5 15h16"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.5v.5"/></symbol>
+  <symbol id="i-note" viewBox="0 0 24 24"><path d="M5 4h14v12l-4 4H5z"/><path d="M15 20v-4h4M8 9h8M8 13h5"/></symbol>
+  <symbol id="i-chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+</svg>
+
+<header class="hero">
+  <div class="hero-in">
+    <div class="brand">
+      <div class="brand-mark"><svg class="ico" aria-hidden="true"><use href="#i-sun"/></svg></div>
+      <div>
+        <h1 id="appTitle">Catalog Access Portal</h1>
+        <p>Choose your name, review your catalogs, and tell us if you will use them.</p>
+      </div>
+    </div>
+    <button class="ghost" id="btnRefresh" type="button" title="Reload catalogs">
+      <svg class="ico" aria-hidden="true"><use href="#i-refresh"/></svg><span>Refresh</span>
+    </button>
+  </div>
+  <svg class="wave" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true"><path d="M0,42 C220,84 470,4 720,34 C970,64 1210,86 1440,32 L1440,80 L0,80 Z"/></svg>
+</header>
+
+<main class="wrap">
+  <section class="panel" aria-labelledby="lblName">
+    <div class="label" id="lblName"><svg class="ico" aria-hidden="true"><use href="#i-user"/></svg>Select your name</div>
+    <div class="field">
+      <svg class="ico" aria-hidden="true"><use href="#i-search"/></svg>
+      <input id="peopleSearch" class="input" type="search" placeholder="Search your name..." autocomplete="off" aria-label="Search your name" disabled>
+    </div>
+    <div class="chips" id="chips" role="tablist" aria-label="People"></div>
+    <p class="hint muted" id="chipHint"></p>
+  </section>
+
+  <section class="panel" id="mainPanel" aria-live="polite"></section>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  var PAGE_SIZE = 30;
+  var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var LS_TAB = 'catalogPortal.tab';
+  /* ---------------- server connection (Google Apps Script web app) ---------------- */
+  var API_URL = 'https://script.google.com/macros/s/AKfycbxdQ6nDMdlXHezF6A4XBLfVxlVg02hVmZsIWx4GaLJrkOuUqsgbdkyCRDXKpynAdvz5/exec';
+  var API_TIMEOUT_MS = 45000;
+
+  function apiFetch(url, opts) {
+    var ctrl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+    var timer = null;
+    if (ctrl) { opts.signal = ctrl.signal; timer = setTimeout(function () { ctrl.abort(); }, API_TIMEOUT_MS); }
+    return fetch(url, opts).then(function (r) {
+      clearTimeout(timer);
+      if (!r.ok) throw new Error('The server returned status ' + r.status + '.');
+      return r.text();
+    }).then(function (t) {
+      try { return JSON.parse(t); }
+      catch (e) { throw new Error('The server did not return data. Make sure the Apps Script web app is deployed as a NEW VERSION with access set to "Anyone".'); }
+    }).catch(function (e) {
+      clearTimeout(timer);
+      if (e && e.name === 'AbortError') throw new Error('The request timed out. Please try again.');
+      if (e instanceof TypeError) throw new Error('Could not reach the server. Check your internet connection, and that the web app access is set to "Anyone".');
+      throw e;
+    });
+  }
+
+  function apiGet(params) {
+    var qs = Object.keys(params).map(function (k) {
+      return encodeURIComponent(k) + '=' + encodeURIComponent(params[k]);
+    }).join('&');
+    return apiFetch(API_URL + '?' + qs + '&_=' + Date.now(), { method: 'GET', redirect: 'follow', cache: 'no-store' });
+  }
+
+  function apiPost(body) {
+    return apiFetch(API_URL, {
+      method: 'POST', redirect: 'follow',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },   // plain text keeps this a "simple" request (no CORS preflight)
+      body: JSON.stringify(body)
+    });
+  }
+
+  var S = {
+    people: [], everyoneCount: 0, catalogs: [],
+    byPerson: {}, everyone: [], listByPerson: {},
+    tab: null, kind: 'all',    // kind: all | mine | everyone
+    repliesCache: {},          // lower(person) -> { catalogId: {reply, note, ts} }
+    loadingReplies: false, reqId: 0,
+    q: '', status: 'all', sort: 'new', shown: PAGE_SIZE,
+    drafts: {},                // lower(person)|id -> {reply, note}
+    peopleQ: '', booted: false
+  };
+
+  /* ---------------- helpers ---------------- */
+  function $(id) { return document.getElementById(id); }
+
+  function h(tag, props, kids) {
+    var el = document.createElement(tag);
+    if (props) {
+      Object.keys(props).forEach(function (k) {
+        var v = props[k];
+        if (v === null || v === undefined || v === false) return;
+        if (k === 'class') el.className = v;
+        else if (k === 'text') el.textContent = v;
+        else if (k.slice(0, 2) === 'on' && typeof v === 'function') el.addEventListener(k.slice(2), v);
+        else el.setAttribute(k, v === true ? '' : String(v));
+      });
+    }
+    (kids || []).forEach(function (c) {
+      if (c === null || c === undefined || c === false) return;
+      el.appendChild(typeof c === 'string' ? document.createTextNode(c) : c);
+    });
+    return el;
+  }
+
+  function icon(name) {
+    var ns = 'http://www.w3.org/2000/svg';
+    var svg = document.createElementNS(ns, 'svg');
+    svg.setAttribute('class', 'ico');
+    svg.setAttribute('aria-hidden', 'true');
+    var use = document.createElementNS(ns, 'use');
+    use.setAttribute('href', '#i-' + name);
+    svg.appendChild(use);
+    return svg;
+  }
+
+  function lsGet(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } }
+  function lsSet(k, v) { try { window.localStorage.setItem(k, v); } catch (e) { /* storage may be blocked; ignore */ } }
+
+  var toastTimer = null;
+  function toast(msg, isErr) {
+    var t = $('toast');
+    t.textContent = '';
+    t.className = 'toast' + (isErr ? ' err' : '');
+    t.appendChild(icon(isErr ? 'alert' : 'check'));
+    t.appendChild(document.createTextNode(msg));
+    void t.offsetWidth;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { t.classList.remove('show'); }, isErr ? 4500 : 2600);
+  }
+
+  function fmtDate(iso, time) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || '');
+    if (!m) return iso || 'Not recorded';
+    var s = parseInt(m[3], 10) + ' ' + MONTHS[parseInt(m[2], 10) - 1] + ' ' + m[1];
+    return time ? s + ', ' + time : s;
+  }
+  function fmtStamp(ts) {
+    var m = /^(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2})$/.exec(ts || '');
+    return m ? fmtDate(m[1], m[2]) : (ts || '');
+  }
+
+  function lower(s) { return String(s || '').toLowerCase(); }
+  function replier() { return S.tab; }
+  function dkey(person, id) { return lower(person) + '|' + id; }
+  function repliesFor(person) { return S.repliesCache[lower(person)] || {}; }
+
+  /* ---------------- data loading ---------------- */
+  function boot(keepTab) {
+    var btn = $('btnRefresh');
+    btn.disabled = true;
+    if (!S.booted) renderLoading();
+    apiGet({ action: 'bootstrap' }).then(
+      function (d) {
+        btn.disabled = false;
+        if (!d || d.ok === false) { renderFatal({ message: (d && d.error) || 'The server returned an unexpected response.' }); return; }
+        onBoot(d, keepTab);
+      },
+      function (e) { btn.disabled = false; renderFatal(e); }
+    );
+  }
+
+  function onBoot(d, keepTab) {
+    if (!d || !d.catalogs || !d.people) { renderFatal({ message: 'The server returned an unexpected response.' }); return; }
+    S.people = d.people;
+    S.everyoneCount = d.everyoneCount || 0;
+    S.catalogs = d.catalogs;
+    $('appTitle').textContent = d.title || 'Catalog Access Portal';
+
+    S.byPerson = {};
+    S.everyone = [];
+    S.catalogs.forEach(function (c) {
+      if (c.a === 1) S.everyone.push(c);
+      c.to.forEach(function (n) {
+        var k = lower(n);
+        (S.byPerson[k] = S.byPerson[k] || []).push(c);
+      });
+    });
+    // Each person sees their own catalogs PLUS the "apply to all" catalogs (no duplicates).
+    S.listByPerson = {};
+    S.people.forEach(function (p) {
+      var k = lower(p.name), seen = {}, out = [];
+      (S.byPerson[k] || []).concat(S.everyone).forEach(function (c) {
+        if (!seen[c.id]) { seen[c.id] = true; out.push(c); }
+      });
+      S.listByPerson[k] = out;
+    });
+
+    S.repliesCache = {};
+    S.booted = true;
+    $('peopleSearch').disabled = false;
+
+    var names = S.people.map(function (p) { return p.name; });
+    var want = keepTab && S.tab ? S.tab : lsGet(LS_TAB);
+    if (names.indexOf(want) === -1) want = null;
+
+    renderChips();
+    if (want) selectTab(want, true); else renderMain();
+  }
+
+  function loadReplies(person, done) {
+    var my = ++S.reqId;
+    S.loadingReplies = true;
+    apiGet({ action: 'replies', person: person }).then(
+      function (res) {
+        if (my !== S.reqId) return;               // a newer request replaced this one
+        S.loadingReplies = false;
+        if (!res || !res.ok) { toast((res && res.error) || 'Could not load your replies.', true); }
+        else { S.repliesCache[lower(person)] = res.replies || {}; }
+        done();
+      },
+      function (e) {
+        if (my !== S.reqId) return;
+        S.loadingReplies = false;
+        toast('Could not load your replies: ' + ((e && e.message) || 'network error'), true);
+        done();
+      }
+    );
+  }
+
+  /* ---------------- tab selection ---------------- */
+  function selectTab(key, silent) {
+    S.tab = key;
+    S.q = ''; S.status = 'all'; S.kind = 'all'; S.sort = 'new'; S.shown = PAGE_SIZE;
+    lsSet(LS_TAB, key);
+    renderChips();
+    var who = replier();
+    if (!who) { S.loadingReplies = false; S.reqId++; renderMain(); return; }
+    if (S.repliesCache[lower(who)]) { S.reqId++; S.loadingReplies = false; renderMain(); return; }
+    S.loadingReplies = true;
+    renderMain();
+    loadReplies(who, function () { renderMain(); });
+    void silent;
+  }
+
+  /* ---------------- chips ---------------- */
+  function renderChips() {
+    var box = $('chips');
+    box.textContent = '';
+    var q = lower(S.peopleQ).trim();
+    var shownCount = 0;
+
+    S.people.forEach(function (p) {
+      if (q && lower(p.name).indexOf(q) === -1) return;
+      box.appendChild(chipEl(p.name, p.name, (S.listByPerson[lower(p.name)] || []).length, 'user'));
+      shownCount++;
+    });
+    if (!shownCount) box.appendChild(h('span', { class: 'muted', text: 'No name matches your search.' }));
+
+    $('chipHint').textContent = S.booted
+      ? (S.people.length + ' people. Every name also includes the ' + S.everyoneCount + ' catalogs that apply to all.')
+      : '';
+  }
+
+  function chipEl(key, label, count, ico) {
+    var isOn = S.tab === key;
+    var b = h('button', {
+      type: 'button',
+      role: 'tab',
+      'aria-selected': isOn ? 'true' : 'false',
+      class: 'chip',
+      onclick: function () { selectTab(key); }
+    }, [icon(ico), h('span', { text: label }), h('span', { class: 'count', text: String(count) })]);
+    return b;
+  }
+
+  /* ---------------- main panel ---------------- */
+  function renderLoading() {
+    var p = $('mainPanel');
+    p.textContent = '';
+    p.appendChild(h('div', { class: 'label' }, [icon('book'), 'Loading catalogs...']));
+    for (var i = 0; i < 3; i++) p.appendChild(h('div', { class: 'skel' }));
+  }
+
+  function renderFatal(e) {
+    var msg = (e && e.message) ? e.message : 'Something went wrong while loading.';
+    var p = $('mainPanel');
+    p.textContent = '';
+    p.appendChild(h('div', { class: 'error', role: 'alert' }, [
+      icon('alert'),
+      h('div', null, [
+        h('strong', { text: 'Could not load the catalogs' }),
+        h('p', { text: msg }),
+        h('button', { class: 'btn primary', type: 'button', onclick: function () { boot(false); } }, [icon('refresh'), 'Try again'])
+      ])
+    ]));
+  }
+
+  function currentList() {
+    return S.listByPerson[lower(S.tab)] || [];
+  }
+
+  function isMine(c) {
+    var k = lower(S.tab);
+    return c.to.some(function (n) { return lower(n) === k; });
+  }
+
+  function statusOf(c, who) {
+    if (!who) return 'pending';
+    var r = repliesFor(who)[c.id];
+    if (!r) return 'pending';
+    return r.reply === 'Yes' ? 'yes' : (r.reply === 'No' ? 'no' : 'pending');
+  }
+
+  function filtered() {
+    var who = replier();
+    var q = lower(S.q).trim();
+    var list = currentList().filter(function (c) {
+      if (q && (lower(c.n).indexOf(q) === -1 && lower(c.by).indexOf(q) === -1 && String(c.id).indexOf(q) === -1)) return false;
+      if (S.kind === 'mine' && !isMine(c)) return false;
+      if (S.kind === 'everyone' && c.a !== 1) return false;
+      if (S.status !== 'all' && statusOf(c, who) !== S.status) return false;
+      return true;
+    });
+    list = list.slice();
+    if (S.sort === 'name') {
+      list.sort(function (a, b) { return lower(a.n) < lower(b.n) ? -1 : (lower(a.n) > lower(b.n) ? 1 : 0); });
+    } else {
+      var dir = S.sort === 'old' ? 1 : -1;
+      list.sort(function (a, b) {
+        var ka = (a.on || '') + ' ' + (a.ot || '');
+        var kb = (b.on || '') + ' ' + (b.ot || '');
+        if (ka !== kb) return ka < kb ? -dir : dir;
+        return (Number(a.id) - Number(b.id)) * dir || 0;
+      });
+    }
+    return list;
+  }
+
+  function renderMain() {
+    var p = $('mainPanel');
+    p.textContent = '';
+
+    if (!S.booted) { renderLoading(); return; }
+
+    if (!S.tab) {
+      p.appendChild(h('div', { class: 'empty' }, [
+        icon('user'),
+        h('h3', { text: 'Pick your name to begin' }),
+        h('p', { text: 'Choose your name above to see the catalogs shared with you.' })
+      ]));
+      return;
+    }
+
+    var title = 'Catalogs for ' + S.tab;
+    var list = currentList();
+    var who = replier();
+
+    // header + stats
+    var counts = { yes: 0, no: 0, pending: 0 };
+    list.forEach(function (c) { counts[statusOf(c, who)]++; });
+    var answered = counts.yes + counts.no;
+
+    var stats = h('div', { class: 'stats' }, [
+      h('span', { class: 'stat total' }, [icon('book'), list.length + ' catalogs'])
+    ]);
+    if (who && !S.loadingReplies) {
+      stats.appendChild(h('span', { class: 'stat' }, [icon('check'), counts.yes + ' Yes']));
+      stats.appendChild(h('span', { class: 'stat no' }, [icon('x'), counts.no + ' No']));
+      stats.appendChild(h('span', { class: 'stat pend' }, [icon('clock'), counts.pending + ' Pending']));
+    }
+
+    p.appendChild(h('div', { class: 'head-row' }, [
+      h('div', null, [
+        h('h2', { text: title }),
+        h('p', { class: 'sub muted', text: 'Your own catalogs plus the catalogs that apply to all users.' })
+      ]),
+      stats
+    ]));
+
+    if (who && !S.loadingReplies && list.length) {
+      var pct = Math.round((answered / list.length) * 100);
+      p.appendChild(h('div', { class: 'bar', role: 'progressbar', 'aria-valuemin': '0', 'aria-valuemax': '100', 'aria-valuenow': String(pct), 'aria-label': 'Replies completed' },
+        [h('i', { style: 'width:' + pct + '%' })]));
+    }
+
+    if (S.loadingReplies) {
+      for (var i = 0; i < 3; i++) p.appendChild(h('div', { class: 'skel' }));
+      return;
+    }
+
+    if (!list.length) {
+      p.appendChild(h('div', { class: 'empty' }, [
+        icon('book'),
+        h('h3', { text: 'No catalogs here' }),
+        h('p', { text: 'There are no catalogs listed for this selection.' })
+      ]));
+      return;
+    }
+
+    // tools: search + sort
+    var search = h('input', { class: 'input', type: 'search', id: 'catSearch', placeholder: 'Search catalog name, creator or Id...', 'aria-label': 'Search catalogs', autocomplete: 'off' });
+    search.value = S.q;
+    var t = null;
+    search.addEventListener('input', function () {
+      clearTimeout(t);
+      t = setTimeout(function () {
+        S.q = search.value; S.shown = PAGE_SIZE;
+        renderListOnly();
+      }, 140);
+    });
+    var sort = h('select', { class: 'select', 'aria-label': 'Sort catalogs' }, [
+      h('option', { value: 'new', text: 'Newest first' }),
+      h('option', { value: 'old', text: 'Oldest first' }),
+      h('option', { value: 'name', text: 'Name A to Z' })
+    ]);
+    sort.value = S.sort;
+    sort.addEventListener('change', function () { S.sort = sort.value; S.shown = PAGE_SIZE; renderListOnly(); });
+
+    p.appendChild(h('div', { class: 'tools' }, [
+      h('div', { class: 'field' }, [icon('search'), search]),
+      sort
+    ]));
+
+    var nMine = list.filter(isMine).length;
+    var nAll = list.filter(function (c) { return c.a === 1; }).length;
+    var kindSeg = h('div', { class: 'seg', role: 'group', 'aria-label': 'Filter by catalog type' });
+    [['all', 'All', list.length], ['mine', 'Assigned to me', nMine], ['everyone', 'Everyone', nAll]].forEach(function (o) {
+      kindSeg.appendChild(h('button', {
+        type: 'button',
+        'aria-pressed': S.kind === o[0] ? 'true' : 'false',
+        onclick: function () { S.kind = o[0]; S.shown = PAGE_SIZE; renderMain(); }
+      }, [o[1] + ' ', h('b', { text: String(o[2]) })]));
+    });
+    p.appendChild(kindSeg);
+
+    var seg = h('div', { class: 'seg', role: 'group', 'aria-label': 'Filter by reply status' });
+    [['all', 'All'], ['pending', 'Pending'], ['yes', 'Yes'], ['no', 'No']].forEach(function (o) {
+      seg.appendChild(h('button', {
+        type: 'button',
+        'aria-pressed': S.status === o[0] ? 'true' : 'false',
+        text: o[1],
+        onclick: function () { S.status = o[0]; S.shown = PAGE_SIZE; renderMain(); }
+      }));
+    });
+    p.appendChild(seg);
+
+    p.appendChild(h('div', { id: 'listBox' }));
+    renderListOnly();
+  }
+
+  function renderListOnly() {
+    var box = $('listBox');
+    if (!box) return;
+    box.textContent = '';
+    var who = replier();
+    var list = filtered();
+
+    if (!list.length) {
+      box.appendChild(h('div', { class: 'empty' }, [
+        icon('search'),
+        h('h3', { text: 'Nothing matches' }),
+        h('p', { text: 'Try a different search or filter.' })
+      ]));
+      return;
+    }
+
+    var wrap = h('div', { class: 'list' });
+    list.slice(0, S.shown).forEach(function (c) { wrap.appendChild(cardEl(c, who)); });
+    box.appendChild(wrap);
+
+    if (list.length > S.shown) {
+      box.appendChild(h('div', { class: 'more' }, [
+        h('button', {
+          class: 'btn plain', type: 'button',
+          onclick: function () { S.shown += PAGE_SIZE; renderListOnly(); }
+        }, [icon('chevron'), 'Show more (' + (list.length - S.shown) + ' remaining)'])
+      ]));
+    }
+  }
+
+  /* ---------------- catalog card ---------------- */
+  function cardEl(c, who) {
+    var rec = repliesFor(who)[c.id];
+    var key = dkey(who, c.id);
+    var draft = S.drafts[key];
+    var st = statusOf(c, who);
+
+    var card = h('article', { class: 'card ' + (st === 'pending' ? '' : st), 'data-id': c.id });
+
+    card.appendChild(h('div', { class: 'card-top' }, [
+      h('div', null, [
+        h('h3', { text: c.n }),
+        h('div', { class: 'idtag' }, [icon('hash'), 'Id ' + c.id])
+      ]),
+      h('span', { class: 'badge ' + (c.a === 1 ? 'all-yes' : 'all-no') }, [
+        icon('globe'), 'Apply to All: ' + (c.a === 1 ? 'Yes (1)' : 'No (0)')
+      ])
+    ]));
+
+    card.appendChild(h('div', { class: 'meta' }, [
+      h('span', null, [icon('pen'), 'Created by ', h('b', { text: c.by || 'Not recorded' })]),
+      h('span', null, [icon('calendar'), 'Created on ', h('b', { text: fmtDate(c.on, c.ot) })])
+    ]));
+
+    var zone = h('div', { class: 'reply' });
+    card.appendChild(zone);
+
+    function rerender() {
+      var fresh = cardEl(c, who);
+      card.replaceWith(fresh);
+      return fresh;
+    }
+
+    if (draft) {
+      // editing state
+      var ta = h('textarea', { placeholder: 'Add a note (optional)', maxlength: '500', 'aria-label': 'Optional note' });
+      ta.value = draft.note || '';
+      var counter = h('span', { class: 'counter', text: ta.value.length + '/500' });
+      ta.addEventListener('input', function () { draft.note = ta.value; counter.textContent = ta.value.length + '/500'; });
+
+      var yes = h('button', { type: 'button', class: 'btn yes' + (draft.reply === 'Yes' ? ' on' : ''), onclick: function () { draft.reply = 'Yes'; var f = rerender(); focusNote(f); } }, [icon('check'), 'Yes, I will use it']);
+      var no = h('button', { type: 'button', class: 'btn no' + (draft.reply === 'No' ? ' on' : ''), onclick: function () { draft.reply = 'No'; var f = rerender(); focusNote(f); } }, [icon('x'), 'No, I will not']);
+
+      zone.appendChild(h('div', { class: 'ask' }, [h('span', { class: 'q', text: 'Will you use this catalog?' }), yes, no]));
+
+      var saveBtn = h('button', { type: 'button', class: 'btn primary' }, [icon('check'), 'Save reply']);
+      saveBtn.addEventListener('click', function () { doSave(c, who, draft, saveBtn, card); });
+      var cancel = h('button', { type: 'button', class: 'btn plain', onclick: function () { delete S.drafts[key]; rerender(); } }, [icon('x'), 'Cancel']);
+      zone.appendChild(h('div', { class: 'editor' }, [ta, h('div', { class: 'row' }, [saveBtn, cancel, counter])]));
+      if (!draft.reply) saveBtn.disabled = true;
+    } else if (rec) {
+      // saved state
+      var isYes = rec.reply === 'Yes';
+      zone.appendChild(h('div', { class: 'saved' }, [
+        h('span', { class: 'pill ' + (isYes ? 'yes' : 'no') }, [icon(isYes ? 'check' : 'x'), isYes ? 'You will use it' : 'You will not use it']),
+        h('span', { class: 'stamp', text: 'Saved ' + fmtStamp(rec.ts) }),
+        h('button', {
+          type: 'button', class: 'btn plain',
+          onclick: function () { S.drafts[key] = { reply: rec.reply, note: rec.note || '' }; var f = rerender(); focusNote(f); }
+        }, [icon('pen'), 'Change'])
+      ]));
+      if (rec.note) zone.appendChild(h('p', { class: 'note', text: rec.note }));
+    } else {
+      // unanswered state
+      zone.appendChild(h('div', { class: 'ask' }, [
+        h('span', { class: 'q', text: 'Will you use this catalog?' }),
+        h('button', { type: 'button', class: 'btn yes', onclick: function () { S.drafts[key] = { reply: 'Yes', note: '' }; var f = rerender(); focusNote(f); } }, [icon('check'), 'Yes, I will use it']),
+        h('button', { type: 'button', class: 'btn no', onclick: function () { S.drafts[key] = { reply: 'No', note: '' }; var f = rerender(); focusNote(f); } }, [icon('x'), 'No, I will not'])
+      ]));
+    }
+    return card;
+  }
+
+  function focusNote(cardNode) {
+    var ta = cardNode && cardNode.querySelector('textarea');
+    if (ta) { ta.focus(); var n = ta.value.length; try { ta.setSelectionRange(n, n); } catch (e) { /* ignore */ } }
+  }
+
+  function doSave(c, who, draft, btn, cardNode) {
+    if (!who) { toast('Please choose your name first.', true); return; }
+    if (draft.reply !== 'Yes' && draft.reply !== 'No') { toast('Please choose Yes or No.', true); return; }
+
+    btn.disabled = true;
+    btn.textContent = '';
+    btn.appendChild(h('span', { class: 'spin' }));
+    btn.appendChild(document.createTextNode('Saving...'));
+
+    apiPost({ action: 'saveReply', person: who, catalogId: c.id, reply: draft.reply, note: draft.note || '' }).then(
+      function (res) {
+        if (!res || !res.ok) {
+          toast((res && res.error) || 'Could not save your reply.', true);
+          resetBtn(btn);
+          return;
+        }
+        var lk = lower(who);
+        S.repliesCache[lk] = S.repliesCache[lk] || {};
+        S.repliesCache[lk][c.id] = { reply: res.record.reply, note: res.record.note, ts: res.record.ts };
+        delete S.drafts[dkey(who, c.id)];
+        toast('Reply saved');
+        // Redraw only if this card is still on screen for the same replier.
+        if (replier() === who && cardNode.isConnected) cardNode.replaceWith(cardEl(c, who));
+        refreshStats();
+      },
+      function (e) {
+        toast('Could not save: ' + ((e && e.message) || 'network error'), true);
+        resetBtn(btn);
+      }
+    );
+  }
+
+  function resetBtn(btn) {
+    btn.disabled = false;
+    btn.textContent = '';
+    btn.appendChild(icon('check'));
+    btn.appendChild(document.createTextNode('Save reply'));
+  }
+
+  /* Update only the counters + progress bar after a save (keeps scroll position and open editors). */
+  function refreshStats() {
+    var who = replier();
+    if (!who || !S.tab) return;
+    var list = currentList();
+    var counts = { yes: 0, no: 0, pending: 0 };
+    list.forEach(function (c) { counts[statusOf(c, who)]++; });
+    var pct = list.length ? Math.round(((counts.yes + counts.no) / list.length) * 100) : 0;
+    var stats = document.querySelector('.stats');
+    if (stats) {
+      stats.textContent = '';
+      stats.appendChild(h('span', { class: 'stat total' }, [icon('book'), list.length + ' catalogs']));
+      stats.appendChild(h('span', { class: 'stat' }, [icon('check'), counts.yes + ' Yes']));
+      stats.appendChild(h('span', { class: 'stat no' }, [icon('x'), counts.no + ' No']));
+      stats.appendChild(h('span', { class: 'stat pend' }, [icon('clock'), counts.pending + ' Pending']));
+    }
+    var bar = document.querySelector('.bar > i');
+    if (bar) bar.style.width = pct + '%';
+  }
+
+  /* ---------------- wiring ---------------- */
+  var pTimer = null;
+  $('peopleSearch').addEventListener('input', function (e) {
+    var v = e.target.value;
+    clearTimeout(pTimer);
+    pTimer = setTimeout(function () { S.peopleQ = v; renderChips(); }, 100);
+  });
+  $('peopleSearch').addEventListener('keydown', function (e) {
+    if (e.key !== 'Enter') return;
+    var first = $('chips').querySelector('button.chip');
+    if (first) first.click();
+  });
+  $('btnRefresh').addEventListener('click', function () { boot(true); });
+
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('sw.js').catch(function () { /* install is optional; ignore */ });
+    });
+  }
+
+  renderLoading();
+  boot(false);
+})();
+</script>
+</body>
+</html>
